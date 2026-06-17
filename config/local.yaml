@@ -1,0 +1,3 @@
+env: local
+storafge_path: "storage/storage.db"
+http_server: address: ""
