@@ -1,0 +1,54 @@
+package config
+
+import (
+	"flag"
+	"log"
+	"os"
+
+	"github.com/ilyakaznacheev/cleanenv"
+)
+
+
+
+type HttpServer struct {
+	address string
+}
+type Config struct {
+	Env string `yaml:"env" env:"ENV" env-required:"true" env-default:"production"`
+	storage_path string `yaml:"storage_path" env-required:"true"`
+	HttpServer `yaml:"http_server"`
+}
+
+
+func MustLoad() *Config{
+	var configPath string
+
+	configPath = os.Getenv("CONFIG_PATH")
+
+	if configPath == ""{
+		flags:= flag.String("cofig", "","path to configuration File")
+		flag.Parse()
+
+		configPath= *flags
+
+		if configPath==""{
+			log.Fatal("Config Path is not set")
+		}
+
+	}
+
+	if _,err:=os.Stat(configPath); os.IsNotExist(err){
+		log.Fatalf("Config does not Exist: %s",configPath)
+	}
+
+	var cfg Config
+
+	err :=cleanenv.ReadConfig(configPath,&cfg)
+	
+	if err!=nil{
+		log.Fatalf("Cannot read Config File : %s",err.Error())
+	}
+	
+
+	return  &cfg
+}

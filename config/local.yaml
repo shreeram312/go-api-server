@@ -1,3 +1,4 @@
 env: local
-storafge_path: "storage/storage.db"
-http_server: address: ""
+storage_path: "storage/storage.db"
+http_server:
+  address: "localhost:8080"
