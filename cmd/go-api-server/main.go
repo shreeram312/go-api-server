@@ -1,45 +1,26 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 )
 
 
-type User struct{ 
-	Name string `json:"name"`
+type server struct {
+	addr string
 }
 
-var userCache = make(map[int] User)
+
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request){
+	w.Write([]byte("Hello "))	
+}
+
 
 func main(){
-	mux:=http.NewServeMux()
-	mux.HandleFunc("/",handleRoot)
-	mux.HandleFunc("POST /users",createUser)
-
-
-	fmt.Println("Server listening on 8080")
-
-	http.ListenAndServe(":8000",mux)
-}
-
-
-func handleRoot(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w,"hello")
-
-}
-
-
-func createUser(w http.ResponseWriter, r *http.Request){
-	var user User
-	err:= json.NewDecoder(r.Body).Decode(&user)
-	if err!=nil{
-		http.Error(w,err.Error(),http.StatusBadRequest)
-		return 
+	s:=&server{addr: ":8080"}
+	err:=http.ListenAndServe(s.addr,s)
+	if err !=nil{
+		log.Fatal(err)
 	}
 
-	if user.Name !=""{
-
-	}
 }
