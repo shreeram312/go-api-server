@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	// "fmt"
 	"log"
 	"net/http"
 )
@@ -11,9 +12,28 @@ type api struct{
 }
 
 
+type User struct{ 
+	FirstName string `json:"first_name"`
+	LastName string `json:"last_name"`
+}
+
+var users = []User{}
+
 func (a * api) getUserHandler(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("content-type","application/json")
+
+
+	err:=json.NewEncoder(w).Encode(users)
+	if err!=nil{
+		http.Error(w,err.Error(),http.StatusInternalServerError)
+		return
+	}
+
+
+	w.WriteHeader(http.StatusOK)
 	// w.Write([] byte("hello"))
-	fmt.Fprintf(w,"hello br")
+	// fmt.Fprintf(w,"hello br")
+	// both are allowed 
 }
 
 
